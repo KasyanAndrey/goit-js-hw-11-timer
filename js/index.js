@@ -1,13 +1,8 @@
 const refs = {
-  wrapper: document.querySelector("#timer-1"),
-  fieldEl: document.querySelector(".field"),
-
   daysEl: document.querySelector('[data-value="days"]'),
   hoursEl: document.querySelector('[data-value="hours"]'),
   minsEl: document.querySelector('[data-value="mins"]'),
   secsEl: document.querySelector('[data-value="secs"]'),
-
-  labelEl: document.querySelector(".label"),
 };
 
 class CountdownTimer {
