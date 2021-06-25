@@ -1,8 +1,3 @@
-// new CountdownTimer({
-//   selector: "#timer-1",
-//   targetDate: new Date("Jul 17, 2019"),
-// });
-
 const refs = {
   wrapper: document.querySelector("#timer-1"),
   fieldEl: document.querySelector(".field"),
@@ -15,23 +10,45 @@ const refs = {
   labelEl: document.querySelector(".label"),
 };
 
-const timer = {
-  start() {
-    const startTime = Date.now();
+class CountdownTimer {
+  constructor({ targetDate, onTick }) {
+    this.targetDate = targetDate;
+    this.onTick = onTick;
+    this.start();
 
+    this.init();
+  }
+
+  init() {
+    const time = this.getTimesComponents(0);
+    this.onTick(time);
+  }
+
+  start() {
     setInterval(() => {
       const currentTime = Date.now();
-      const deltaTime = currentTime - startTime;
-      const time = getTimesComponents(deltaTime);
-      // console.log("текущее время", currentTime);
-      updateSpanValueFace(time);
+      const deltaTime = this.targetDate - currentTime;
+      const time = this.getTimesComponents(deltaTime);
 
-      // console.log(time);
+      this.onTick(time);
     }, 1000);
-  },
-};
+  }
 
-timer.start();
+  pad(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  getTimesComponents(time) {
+    const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
+    const hours = this.pad(
+      Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    );
+    const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+    const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
+
+    return { days, hours, mins, secs };
+  }
+}
 
 function updateSpanValueFace({ days, hours, mins, secs }) {
   refs.daysEl.textContent = `${days}`;
@@ -40,17 +57,7 @@ function updateSpanValueFace({ days, hours, mins, secs }) {
   refs.secsEl.textContent = `${secs}`;
 }
 
-function pad(value) {
-  return String(value).padStart(2, "0");
-}
-
-function getTimesComponents(time) {
-  const days = pad(Math.floor(time / (1000 * 60 * 60 * 24)));
-  const hours = pad(
-    Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  );
-  const mins = pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
-  const secs = pad(Math.floor((time % (1000 * 60)) / 1000));
-
-  return { days, hours, mins, secs };
-}
+const newTimer = new CountdownTimer({
+  targetDate: new Date("Jul 17, 2021"),
+  onTick: updateSpanValueFace,
+});
