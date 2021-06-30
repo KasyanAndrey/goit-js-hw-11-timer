@@ -7,11 +7,12 @@ const refs = {
 
 class CountdownTimer {
   constructor({ targetDate, onTick }) {
+    this.timeId = null;
     this.targetDate = targetDate;
     this.onTick = onTick;
     this.start();
-
     this.init();
+    this.stop;
   }
 
   init() {
@@ -20,13 +21,22 @@ class CountdownTimer {
   }
 
   start() {
-    setInterval(() => {
+    this.timeId = setInterval(() => {
       const currentTime = Date.now();
       const deltaTime = this.targetDate - currentTime;
       const time = this.getTimesComponents(deltaTime);
 
+      if (Number(this.targetDate) < Number(currentTime)) {
+        this.stop();
+      }
+
       this.onTick(time);
     }, 1000);
+  }
+
+  stop() {
+    clearInterval(this.timeId);
+    this.init();
   }
 
   pad(value) {
@@ -53,6 +63,7 @@ function updateSpanValueFace({ days, hours, mins, secs }) {
 }
 
 const newTimer = new CountdownTimer({
-  targetDate: new Date("Jul 17, 2021"),
+  selector: "#timer-1",
+  targetDate: new Date("Jul 27, 2021"),
   onTick: updateSpanValueFace,
 });
